@@ -6,7 +6,7 @@ const fs = require("fs");
 const directorioSalida = "./output/";
 
 // numero de mensajes a crear por bloque
-const mensajesPorBloque = 3;
+const mensajesPorBloque = 2;
 
 // generar ficheros de esqueletos
 const escribir = false;
@@ -17,18 +17,18 @@ const entrada = true;
 
 // Número de artículos en el array por bloque
 //const numArticulos = [7000, 13000, 20000, 26000];
-const numArticulos = [100, 200, 400, 600];
-//const numArticulos = [5, 10, 15];
-
+const numArticulos = [100, 200, 300, 400];
 const bloques = numArticulos.length;
 
 // Array que contiene los JSON base de los bloques
 const JSONs = new Array();
 
+// FUNCION: generarEsqueletos
+// DETALLE: genera el esqueleto del JSON de orders en función
+//          del número de artículos que reciba por parámetros
 const generarEsqueletos = (articulos) => {
   // primero vamos a crear el esqueleto del json
   const orderJSON = new Object();
-
   // Obtenemos fechas
   const hoy = moment()
     .hour(8)
@@ -117,6 +117,8 @@ const generarEsqueletos = (articulos) => {
   return orderJSON;
 };
 
+// FUNCION: enviarDatos
+// DETALLE: Se encarga de hacer el post contra supply-orders-data
 const enviarDatos = async (data, i, j, propuesta) => {
   const start = new Date().getTime();
   let total = 0;
@@ -159,11 +161,16 @@ const enviarDatos = async (data, i, j, propuesta) => {
   return total;
 };
 
+// FUNCION: pruebaRendimiento
+// DETALLE: Funcion principal que se encarga de:
+//          - Construir los JSONs (llamar a generarEsqueletos)
+//          - Escribir los JSONs a fichero (en caso de ser necesario)
+//          - Llamar a enviarDatos
 const pruebaRendimiento = async () => {
   let orderCode = 0;
   // Vamos a construir los JSON de cada bloque
   for (let i = 0; i < bloques; i++) {
-    for (let j = 0; j < mensajesPorBloque; j++) {
+//    for (let j = 0; j < mensajesPorBloque; j++) {
       const propuesta = generarEsqueletos(numArticulos[i]);
       if (!entrada) {
         orderCode++;
@@ -186,13 +193,17 @@ const pruebaRendimiento = async () => {
         );
       }
       JSONs.push(propuesta);
-    }
+//    }
   }
+
+  //console.log(JSONs);
+
   // Bucle del número de bloques
   for (let i = 0; i < bloques; i++) {
     const datos = JSONs[i];
-    console.log("BLOQUE " + (i + 1) + ": Número artículos " + numArticulos[i]);
-    console.log("-------------------------------------");
+    const bytes = new Intl.NumberFormat('es-ES').format((JSON.stringify(JSONs[i], null, 2).length / 1024).toFixed(0))
+    console.log("BLOQUE " + (i + 1) + ": Número artículos " + numArticulos[i] + " - Tamaño aprox " + bytes + " KB") ;
+    console.log("---------------------------------------------------------");
     let max = 0;
     let min = 999999999;
     let tiempoTotal = 0;
