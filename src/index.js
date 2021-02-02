@@ -6,7 +6,7 @@ const fs = require("fs");
 const directorioSalida = "./output/";
 
 // numero de mensajes a crear por bloque
-const mensajesPorBloque = 2;
+const mensajesPorBloque = 10;
 
 // generar ficheros de esqueletos
 const escribir = false;
@@ -17,7 +17,7 @@ const entrada = true;
 
 // Número de artículos en el array por bloque
 //const numArticulos = [7000, 13000, 20000, 26000];
-const numArticulos = [100, 200, 300, 400];
+const numArticulos = [500, 1000, 1500, 2000, 2500];
 const bloques = numArticulos.length;
 
 // Array que contiene los JSON base de los bloques
@@ -170,7 +170,6 @@ const pruebaRendimiento = async () => {
   let orderCode = 0;
   // Vamos a construir los JSON de cada bloque
   for (let i = 0; i < bloques; i++) {
-//    for (let j = 0; j < mensajesPorBloque; j++) {
       const propuesta = generarEsqueletos(numArticulos[i]);
       if (!entrada) {
         orderCode++;
@@ -178,7 +177,7 @@ const pruebaRendimiento = async () => {
       }
       if (escribir) {
         const fichero =
-          directorioSalida + "orderBloque" + (i + 1) + "_" + (j + 1) + ".json";
+          directorioSalida + "orderBloque" + (i + 1) + ".json";
         fs.writeFile(
           fichero,
           JSON.stringify(propuesta, null, 2),
@@ -193,7 +192,6 @@ const pruebaRendimiento = async () => {
         );
       }
       JSONs.push(propuesta);
-//    }
   }
 
   //console.log(JSONs);
